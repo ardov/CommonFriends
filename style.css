@@ -1,0 +1,204 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+html {
+    font-family: 'Roboto', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 100%;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+body {
+    min-height: 100vh;
+    background: white;
+}
+
+a {
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+a:hover {
+    text-decoration: underline;
+    color: black;
+}
+
+.wrapper {
+    overflow-y: scroll;
+    height: 600px;
+}
+
+.owner-container {
+    display: flex;
+    flex-flow: row wrap;
+    padding: 20px;
+}
+
+.field {
+    width: 100%;
+    height: 48px;
+    padding: 8px 20px;
+    font-size: 16px;
+    outline: none;
+    box-sizing: border-box;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+
+/* O W N E R */
+
+.owner {
+    height: 32px;
+    background: #f5f7fa;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50px;
+    margin-right: 16px;
+    margin-bottom: 16px;
+}
+
+.owner__photo {
+    height: 32px;
+    width: 32px;
+    background-position: center;
+    background-size: cover;
+    background-color: rgba(0, 0, 0, 0.06);
+    display: block;
+    border-radius: 50px;
+}
+
+.owner__delete {
+    height: 32px;
+    width: 32px;
+    background-image: url(ic_close_white_24px.svg);
+    background-position: center;
+    /*background-size: cover;*/
+    background-color: rgba(0, 0, 0, 0.3);
+    display: block;
+    border-radius: 50px;
+    transform: rotate(45deg);
+    cursor: pointer;
+    transition: all ease .2s;
+    opacity: 0;
+}
+
+.owner__delete:hover {
+    transform: rotate(0deg);
+    opacity: 1;
+}
+
+
+.owner__photo:hover::before:hover {
+    background: rgba(0,0,0,.8);
+}
+
+.owner__name {
+    display: block;
+    margin-left: 8px;
+    margin-right: 16px;
+    border-radius: 50px;
+    vertical-align: middle;
+}
+
+
+/* F R I E N D */
+
+.friend-list {
+    display: flex;
+    flex-flow: column;
+    padding: 0 20px 20px;
+}
+
+.friend-list__header {
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.54);
+    margin: 16px 0 16px;
+    font-size: 16px;
+    font-weight: 300;
+}
+
+.friend {
+    /* height: 32px; */
+    background: rgba(0, 0, 0, 0.00);
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+    border-radius: 2px;
+    margin-bottom: 16px;
+}
+
+.friend__photo {
+    height: 48px;
+    width: 48px;
+    background-image: url(https://pp.userapi.com/c620118/v620118881/14c2b/NKtInyJI4ug.jpg);
+    background-position: center;
+    background-size: cover;
+    background-color: rgba(0, 0, 0, 0.06);
+    display: block;
+    border-radius: 50px;
+    margin-right: 16px;
+}
+
+.friend__add {
+    height: 48px;
+    width: 48px;
+    background-image: url(ic_close_white_24px.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    /*background-size: cover;*/
+    background-color: rgba(0, 0, 0, 0.3);
+    display: block;
+    border-radius: 50px;
+    transform: rotate(0deg);
+    cursor: pointer;
+    transition: all ease .2s;
+    opacity: 0;
+}
+
+.friend__add:hover {
+    transform: rotate(45deg);
+    opacity: 1;
+}
+
+.friend__name {
+    width: 224px;
+    display: block;
+    margin-right: 16px;
+    vertical-align: middle;
+}
+
+.friend__city {
+    display: block;
+    margin-right: 16px;
+    border-radius: 50px;
+    vertical-align: middle;
+}
+
+.friend__owners {
+    display: flex;
+    /* align-self: flex-end; */
+    margin-left: auto;
+    vertical-align: middle;
+}
+
+.friend__owner-photo {
+    height: 24px;
+    width: 24px;
+    background-image: url(https://pp.userapi.com/c836724/v836724634/1ecc8/q5VlN41ep0o.jpg);
+    background-position: center;
+    background-size: cover;
+    background-color: rgba(0, 0, 0, 0.06);
+    display: block;
+    border-radius: 50px;
+    margin-left: -8px;
+    border: 1px solid white
+}
