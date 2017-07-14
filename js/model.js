@@ -2,110 +2,112 @@
     'use strict';
 
     function Model() {
-        this.ownersIds = [];
         this.owners = [];
-        this.commonList = [];
+
         this.updated = new Event();
+        this.loading = new Event();
     }
 
-    Model.prototype.addOwner = function (owner) {
-        this.ownersIds.push(owner);
-        this.update();
-    };
-
-    Model.prototype.removeOwner = function (id) {
-        var i = this.ownersIds.indexOf(id);
-        if (i == -1) {
-            return;
-        } else {
-            this.ownersIds.splice(i, 1);
-            this.update();
-        }
-    };
-
-    Model.prototype.update = function () {
+    Model.prototype.addOwner = function (id) {
         var self = this;
-        var updated = 0;
+        var owners = [];
+        var ready = [];
 
-        if (self.ownersIds.length === 0) {
-            console.log('empty');
-            self.owners = [];
-            self.friends = [];
-            self.commonList = [];
+        self.loading.raise();
 
-            self.updated.raise();
-        } else {
-            getOwners();
-        }
-
-        function getOwners() {
-            var opts = {
-                user_ids: self.ownersIds.join(','),
+        VK.api(
+            "users.get",
+            {
+                user_ids: id,
                 fields: 'photo_100',
                 test_mode: testMode,
                 access_token: accessToken
-            };
+            },
+            gotOwners
+        );
 
-            VK.api("users.get", opts, function(data) {
-                console.log('Получили данные для ', self.ownersIds.join(','), data);
-                self.owners = data.response.filter(function(el) {
-                    return !el.deactivated;
-                });
+        function gotOwners(data) {
+            console.log('Получили данные для ' + id, data);
 
-                // delete all ids and fill again with nums
-                self.ownersIds = self.owners.map(function(el) {
-                    return el.id;
-                });
-                self.owners.forEach(getFriends);
+            owners = data.response.filter(function(el) {
+                return !el.deactivated;
             });
+
+            owners.forEach(addFriends);
         }
 
-        function getFriends(owner) {
-            var opts = {
-                user_id: owner.id,
-                order: "name",
-                fields: 'nickname, domain, sex, bdate, city, country, timezone, photo_50, photo_100, has_mobile, contacts, education, online, relation, last_seen, status, universities',
-                test_mode: testMode,
-                access_token: accessToken
-            };
+        function addFriends(owner) {
 
-            VK.api("friends.get", opts, function(data) {
-                owner.friends = data.response.items;
-                console.log('Получили друзей для ', owner.id, owner.friends);
+            VK.api(
+                "friends.get",
+                {
+                    user_id: owner.id,
+                    order: "name",
+                    fields: 'nickname, domain, sex, bdate, city, country, timezone, photo_50, photo_100, has_mobile, contacts, education, online, relation, last_seen, status, universities',
+                    test_mode: testMode,
+                    access_token: accessToken
+                },
+                function(data) {
+                    owner.friends = data.response.items;
+                    ready.push(owner);
+                    // console.log('Получили друзей для ' + owner.id, owner.friends);
 
-                updated++;
-                if(self.owners.length == updated) makeCommonList();
-            });
-        }
-
-        function makeCommonList() {
-            var commonList = [];
-
-            self.owners.forEach(function(owner) {
-                owner.friends.forEach(function(friend) {
-                    var index = commonList.findIndex(function(el) {
-                        return friend.id == el.id;
-                    });
-
-                    if (index == -1) { // не нашли
-                        friend.owners = [owner];
-                        commonList.push(friend);
-                    } else { // нашли
-                        commonList[index].owners.push(owner);
+                    if(owners.length == ready.length) {
+                        self.owners = self.owners.concat(ready);
+                        self.updated.raise();
                     }
+            });
+        }
+    };
+
+
+
+
+    Model.prototype.removeOwner = function (id) {
+        var i = this.owners.findIndex(function(el) {
+            return el.id == id;
+        });
+
+        if (i == -1) {
+            return;
+        } else {
+            this.owners.splice(i, 1);
+            this.updated.raise();
+        }
+    };
+
+
+
+    Model.prototype.getCommonList = function (minCommon) {
+        var self = this;
+        var min = minCommon || 2;
+        var commonList = [];
+
+        self.owners.forEach(function(owner) {
+            owner.friends.forEach(function(friend) {
+                var index = commonList.findIndex(function(el) {
+                    return friend.id == el.id;
                 });
-            });
 
-            self.commonList = commonList.filter(function (el) {
-                return el.owners.length > 1;
+                if (index == -1) { // не нашли
+                    friend.owners = [owner];
+                    commonList.push(friend);
+                } else { // нашли
+                    commonList[index].owners.push(owner);
+                }
             });
+        });
 
-            self.commonList.sort(function(a, b) {
+        commonList = commonList
+            .filter(function (el) {
+                return el.owners.length >= min;
+            })
+            .sort(function(a, b) {
                 return b.owners.length - a.owners.length;
             });
-            console.log('commonList ', self.commonList);
-            self.updated.raise();
-        }
+
+        console.log('commonList ', self.commonList);
+        return commonList;
     };
 
     // Exports

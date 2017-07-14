@@ -12,8 +12,9 @@
         var self = this;
 
         self.view.render('owners', self.model.owners);
-        self.view.render('friends', self.model.commonList);
+        self.view.render('friends', self.model.getCommonList());
         self.view.render('field', '');
+        self.view.loading(false);
     };
 
     Controller.prototype.getId = function (val) {
@@ -32,9 +33,16 @@
         self.model.removeOwner(+id);
     };
 
+    Controller.prototype.loading = function () {
+        var self = this;
+        self.view.loading(true);
+    };
+
     Controller.prototype.init = function () {
         var self = this;
         self.model.updated.subscribe(self.setView, self);
+        self.model.loading.subscribe(self.loading, self);
+
         self.view.add.subscribe(self.getId, self);
         self.view.remove.subscribe(self.removeOwner, self);
     };

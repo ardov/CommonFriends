@@ -19,12 +19,16 @@ body {
 
 a {
     text-decoration: none;
-    color: rgba(0, 0, 0, 0.87);
+    color: rgba(40, 84, 115, 1);
 }
 
 a:hover {
     text-decoration: underline;
-    color: black;
+    color: rgba(40, 84, 115, 1);
+}
+
+a:visited {
+    color: rgba(40, 84, 115, .4);
 }
 
 .wrapper {
@@ -201,4 +205,20 @@ a:hover {
     border-radius: 50px;
     margin-left: -8px;
     border: 1px solid white
+}
+
+/* L O A D E R */
+
+.loader {
+    display: none;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 24px;
+    height: 24px;
+    background: red;
+}
+
+.loader.show {
+    display: block;
 }

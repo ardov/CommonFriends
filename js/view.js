@@ -14,6 +14,7 @@
         this.$friendList = qs('.friend-list');
         this.$add = qs('.add');
         this.$field = qs('.field');
+        this.$loader = qs('.loader');
 
         $on(this.$field, 'keydown', function (e) {
             if (e.keyCode == 13 && this.value) {
@@ -73,12 +74,21 @@
         viewCommands[cmd](parameter);
     };
 
+    View.prototype.loading = function (state) {
+        if (state) {
+            this.$loader.classList.add('show');
+        } else {
+            this.$loader.classList.remove('show');
+        }
+    };
+
     View.prototype._getRoot = function (template, data) {
         var html = template(data);
         var el = document.createElement('div');
         el.innerHTML = html;
         return el.firstElementChild;
     };
+
 
 
 
