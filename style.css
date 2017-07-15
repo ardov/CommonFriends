@@ -207,18 +207,30 @@ a:visited {
     border: 1px solid white
 }
 
+
 /* L O A D E R */
 
-.loader {
+@keyframes pulse {
+    from {
+        transform: scaleX(1);
+        opacity: .3;
+    }
+    to {
+        transform: scaleX(.3);
+        opacity: 1;
+    }
+}
+
+.loader {    
     display: none;
     position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 24px;
-    height: 24px;
-    background: red;
+    width: 100%;
+    height: 1px;
+    background: rgb(40, 84, 115);
 }
 
 .loader.show {
     display: block;
+    animation: pulse .1s infinite;
+    -webkit-animation: pulse .8s ease-in-out infinite alternate;
 }
