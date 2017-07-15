@@ -62,17 +62,23 @@
 
 
 
-
     Model.prototype.removeOwner = function (id) {
+        if (this.isOwner(id)) {
+            this.owners.splice(i, 1);
+            this.updated.raise();
+        }
+    };
+
+
+    Model.prototype.isOwner = function (id) {
         var i = this.owners.findIndex(function(el) {
             return el.id == id;
         });
 
         if (i == -1) {
-            return;
+            return false;
         } else {
-            this.owners.splice(i, 1);
-            this.updated.raise();
+            return true;
         }
     };
 
