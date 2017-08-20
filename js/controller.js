@@ -11,6 +11,8 @@
     Controller.prototype.setView = function () {
         var self = this;
 
+        if (self.model.owners.length>2) yaCounter45439689.reachGoal('more_than_two');
+        
         self.view.render('owners', self.model.owners);
         self.view.render('friends', self.model.getCommonList());
         self.view.render('field', '');
