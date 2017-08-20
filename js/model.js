@@ -33,14 +33,7 @@
                 return !el.deactivated;
             });
 
-            if (owners.length) {
-                owners.forEach(addFriends);
-            } else {
-                console.log('deactivated');
-                self.updated.raise();
-                return;
-            }
-
+            owners.forEach(addFriends);
         }
 
         function addFriends(owner) {
@@ -70,8 +63,7 @@
 
 
     Model.prototype.removeOwner = function (id) {
-        var i = this.isOwner(id);
-        if (i !== -1) {
+        if (this.isOwner(id)) {
             this.owners.splice(i, 1);
             this.updated.raise();
         }
@@ -83,37 +75,38 @@
             return el.id == id;
         });
 
-        return i;
+        if (i == -1) {
+            return false;
+        } else {
+            return true;
+        }
     };
 
 
 
-    Model.prototype.getCommonList = function () {
+    Model.prototype.getCommonList = function (minCommon) {
         var self = this;
+        var min = minCommon || 2;
         var commonList = [];
 
         self.owners.forEach(function(owner) {
-
             owner.friends.forEach(function(friend) {
-
                 var index = commonList.findIndex(function(el) {
                     return friend.id == el.id;
                 });
 
-                if (~index) { // не нашли
-                    commonList[index].owners.push(owner);
-                } else { // нашли
+                if (index == -1) { // не нашли
                     friend.owners = [owner];
                     commonList.push(friend);
+                } else { // нашли
+                    commonList[index].owners.push(owner);
                 }
-
             });
-
         });
 
         commonList = commonList
             .filter(function (el) {
-                return el.owners.length > 1 && !~self.isOwner(el.id);
+                return el.owners.length >= min;
             })
             .sort(function(a, b) {
                 return b.owners.length - a.owners.length;

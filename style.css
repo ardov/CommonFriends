@@ -95,12 +95,12 @@ a:visited {
 
 .owner:hover .owner__delete {
     transform: rotate(0deg);
-    opacity: .5;
+    opacity: 1;
 }
 
-.owner:hover .owner__delete:hover {
-    transform: rotate(0deg);
-    opacity: 1;
+
+.owner__photo:hover::before:hover {
+    background: rgba(0,0,0,.8);
 }
 
 .owner__name {
