@@ -1,3 +1,4 @@
+// console.clear();
 (function (exports) {
   'use strict';
 
@@ -12,31 +13,67 @@
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
-
   let accessToken = getParameterByName('access_token');
-
   let testMode = 1;
+
+  class Owner {
+    constructor(data) {
+      this.first_name = data.first_name;
+      this.last_name = data.last_name;
+      this.id = data.id;
+      this.photo_100 = data.photo_100;
+
+      this.friends = [];
+      this.friendsCount = 0;
+      this.loading = false;
+      this.recievedFriends = false;
+      this.enabled = true;
+
+      this.fetchFriends()
+    }
+    fetchFriends () {
+      let self = this;
+      self.loading = true;
+      console.log("loading friends");
+      VK.api(
+        "friends.get", {
+          user_id: this.id,
+          order: "name",
+          fields: 'nickname, domain, sex, bdate, city, country, timezone, photo_50, photo_100, has_mobile, contacts, education, online, relation, last_seen, status, universities',
+          test_mode: testMode,
+          access_token: accessToken
+        },
+        function (data) {
+          self.friends = data.response.items;
+          self.friendsCount = data.response.count;
+          self.loading = false;
+          self.recievedFriends = true;
+
+          console.log('GOT FRIENDS', self, data);
+          if (self.friends.length !== self.friendsCount) console.log(`Not all friends ${self.friends.length}/${self.friendsCount}`);
+        }
+      );
+    }
+  }
+
 
   VK.init(
     function success() {
-      // console.clear();
       console.log('start');
     },
     function error() {
-      console.warn('trouble with VK.init');
+      console.warn('! trouble with VK.init');
     },
     '5.65'
   );
-
-
-
-
 
   exports.vm145 = new Vue({
     el: '#app',
     data: {
       owners: [],
       minCommon: 2,
+      loading: false,
+      errorText: '',
       input: ''
     },
     computed: {
@@ -67,9 +104,10 @@
     },
 
     methods: {
-      addOwner(id) {
+      fetchOwners(id) {
+        let self = this;
+        self.loading = true;
         if (!id) id = this.input;
-        var self = this;
 
         VK.api(
           "users.get", {
@@ -78,43 +116,36 @@
             test_mode: testMode,
             access_token: accessToken
           },
-          gotOwners
+          function (data) {
+            self.loading = false;
+            self.addOwners(data);
+          }
         );
+      },
 
-        function gotOwners(data) {
-          console.log('Получили данные для ' + id, data);
+      addOwners(data) {
+        let self = this;
+        console.log('Получили данные', data);
 
+        if (data.error) {
+          self.showError(data.error.error_msg);
+        } else {
           data.response.forEach( (el) => {
-            if (!el.deactivated) {
-              el.friends = [];
-              self.owners.push(el);
+            if (el.deactivated) {
+              self.showError("Пользователь "+el.first_name+" удалён =(");
+            } else {
+              self.owners.push(new Owner(el));
             }
           });
-
-          // let newOwners = data.response.filter((el) => !el.deactivated);
-          // self.owners = self.owners.concat(newOwners);
-          self.addFriends();
         }
       },
 
-      addFriends() {
-        this.owners.forEach((owner) => {
-          if (owner.friends.length === 0) {
-            VK.api(
-              "friends.get", {
-                user_id: owner.id,
-                order: "name",
-                fields: 'nickname, domain, sex, bdate, city, country, timezone, photo_50, photo_100, has_mobile, contacts, education, online, relation, last_seen, status, universities',
-                test_mode: testMode,
-                access_token: accessToken
-              },
-              function (data) {
-                console.log('GOT FRIENDS', this, data);
-                owner.friends = data.response.items;
-              }
-            );
-          }
-        });
+      showError(text) {
+        this.errorText = text;
+        setTimeout(this.hideError, 2000);
+      },
+      hideError() {
+        this.errorText = '';
       }
     },
   });

@@ -4,13 +4,13 @@
 <head>
   <title>Поиск общих друзей в контакте</title>
   <meta charset="utf-8">
+  <link rel="stylesheet" href="reset.css">
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto|Roboto+Slab:300,400&amp;subset=cyrillic">
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.3/vue.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.js"></script>
   <script src="//vk.com/js/api/xd_connection.js?2"></script>
+  <!-- <script>var VK = {api:{},init:() => {}};</script> -->
 </head>
 
 <body>
@@ -20,20 +20,23 @@
       class='field'
       placeholder="Адрес страницы или ID человека"
       autofocus
-      v-on:keyup.13="addOwner()"
+      v-on:keyup.13="fetchOwners()"
       v-model="input"/>
-    <div class="loader"></div>
+
+    <p v-if="errorText" class="error">{{errorText}}</p>
+
+    <div v-if="loading" class="loader"></div>
 
 
     <div class='owner-container'>
-      <div class='owner' v-for="owner in owners">
+      <div class='owner' v-bind:class="{ loading: owner.loading }" v-for="owner in owners">
         <div class='owner__photo'
           v-bind:style='{backgroundImage: "url(" + owner.photo_100 + ")"}'>
           <div class='owner__delete' title="Удалить"></div>
         </div>
         <div class='owner__name'>
           <a v-bind:href="'https://vk.com/id' + owner.id" target="_blank">
-            {{owner.first_name}} {{owner.last_name}}
+            {{owner.first_name}} {{owner.last_name}} {{owner.friends.length}}
           </a>
         </div>
       </div>
@@ -52,7 +55,7 @@
             {{friend.first_name}} {{friend.last_name}}
           </a>
         </div>
-        <div class='friend__city'>{{friend.city.title}}</div>
+        <div class='friend__city' v-if='friend.city'>{{friend.city.title}}</div>
         <div class='friend__owners'>
           <div v-for="owner in friend.owners" class='friend__owner-photo' v-bind:style='{backgroundImage: "url(" + owner.photo_100 + ")"}' v-bind:title='owner.first_name + " " + owner.last_name'>
           </div>
