@@ -67,20 +67,25 @@
     '5.65'
   );
 
-  exports.vm145 = new Vue({
+  exports.vm = new Vue({
     el: '#app',
+    name: 'Friend Search App',
     data: {
-      owners: [],
+      owners: {},
       minCommon: 2,
       loading: false,
       errorText: '',
       input: ''
     },
     computed: {
+      ownersList() {
+        return Object.values(this.owners);
+      },
+
       friendList() {
         let friendList = [];
 
-        this.owners.forEach((owner) => {
+        this.ownersList.forEach((owner) => {
           owner.friends.forEach((friend) => {
             var index = friendList.findIndex((el) => friend.id === el.id);
 
@@ -104,6 +109,10 @@
     },
 
     methods: {
+      consolIt() {
+        console.log(this);
+      },
+
       fetchOwners(id) {
         let self = this;
         self.loading = true;
@@ -134,7 +143,7 @@
             if (el.deactivated) {
               self.showError("Пользователь "+el.first_name+" удалён =(");
             } else {
-              self.owners.push(new Owner(el));
+              Vue.set(self.owners, el.id, new Owner(el))
             }
           });
         }

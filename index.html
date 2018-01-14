@@ -17,6 +17,7 @@
   <div class="wrapper" id="app">
 
     <section class="header">
+      <!-- <button @click="consolIt()">this</button> -->
       <input
         type="text"
         class='field'
@@ -24,7 +25,7 @@
         autofocus
         v-on:keyup.13="fetchOwners()"
         v-model="input"
-        v-class="{ loading:loading }" />
+        v-bind:class="{ loading:loading }" />
       <p class="error" v-bind:class="{ error_hidden: !errorText }">{{errorText}}</p>
       <div v-if="loading" class="loader"></div>
       <div class="suggest">
@@ -54,7 +55,7 @@
 
 
     <section class='owners'>
-      <div class='owner' v-bind:class="{ loading: owner.loading }" v-for="owner in owners">
+      <div class='owner' v-bind:class="{ loading: owner.loading }" v-for="owner in ownersList">
         <div class='owner__photo' v-bind:style='{backgroundImage: "url(" + owner.photo_100 + ")"}'>
           <div class='owner__delete' title="Удалить"></div>
         </div>
@@ -69,10 +70,10 @@
     <section class='friends'>
       <h1 class='friends__header'>Общие друзья</h1>
 
-      <p class="help" v-if="owners.length<2">
+      <p class="help" v-if="ownersList.length<2">
         Добавьте как минимум двух человек, чтобы я нашёл их общих друзей
       </p>
-      <p class="help" v-if="!commonFriends.length && owners.length>1">
+      <p class="help" v-if="!commonFriends.length && ownersList.length>1">
         Нет общих друзей
       </p>
 
