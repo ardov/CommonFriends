@@ -17,24 +17,54 @@
   <div class="wrapper" id="app">
 
     <section class="header">
-      <input type="text" class='field' placeholder="Адрес страницы или ID человека" autofocus v-on:keyup.13="fetchOwners()" v-model="input" />
-      <p  class="error" v-bind:class="{ error_hidden: !errorText }">{{errorText}}</p>
+      <input
+        type="text"
+        class='field'
+        placeholder="Адрес страницы или ID человека"
+        autofocus
+        v-on:keyup.13="fetchOwners()"
+        v-model="input"
+        v-class="{ loading:loading }" />
+      <p class="error" v-bind:class="{ error_hidden: !errorText }">{{errorText}}</p>
       <div v-if="loading" class="loader"></div>
+      <div class="suggest">
+        <h1 class="suggest__header">Friends</h1>
+        <div class="suggest__item">
+          <div class="suggest__item-photo"></div>
+          <div class="suggest__item-name">Георг</div>
+        </div>
+        <div class="suggest__item">
+          <div class="suggest__item-photo"></div>
+          <div class="suggest__item-name">Андрей</div>
+        </div>
+        <div class="suggest__item">
+          <div class="suggest__item-photo"></div>
+          <div class="suggest__item-name">Миша</div>
+        </div>
+        <div class="suggest__item">
+          <div class="suggest__item-photo"></div>
+          <div class="suggest__item-name"></div>
+        </div>
+        <div class="suggest__item">
+          <div class="suggest__item-photo"></div>
+          <div class="suggest__item-name"></div>
+        </div>
+      </div>
     </section>
 
 
-      <section class='owners'>
-        <div class='owner' v-bind:class="{ loading: owner.loading }" v-for="owner in owners">
-          <div class='owner__photo' v-bind:style='{backgroundImage: "url(" + owner.photo_100 + ")"}'>
-            <div class='owner__delete' title="Удалить"></div>
-          </div>
-          <div class='owner__name'>
-            <a v-bind:href="'https://vk.com/id' + owner.id" target="_blank">
+    <section class='owners'>
+      <div class='owner' v-bind:class="{ loading: owner.loading }" v-for="owner in owners">
+        <div class='owner__photo' v-bind:style='{backgroundImage: "url(" + owner.photo_100 + ")"}'>
+          <div class='owner__delete' title="Удалить"></div>
+        </div>
+        <div class='owner__name'>
+          <a v-bind:href="'https://vk.com/id' + owner.id" target="_blank">
             {{owner.first_name}} {{owner.last_name}} {{owner.friends.length}}
           </a>
-          </div>
         </div>
-      </section>
+      </div>
+    </section>
 
     <section class='friends'>
       <h1 class='friends__header'>Общие друзья</h1>
