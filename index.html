@@ -15,11 +15,10 @@
 
 <body>
   <div class="wrapper" id="app">
+
     <section class="header">
       <input type="text" class='field' placeholder="Адрес страницы или ID человека" autofocus v-on:keyup.13="fetchOwners()" v-model="input" />
-
-      <p v-if="errorText" class="error">{{errorText}}</p>
-
+      <p  class="error" v-bind:class="{ error_hidden: !errorText }">{{errorText}}</p>
       <div v-if="loading" class="loader"></div>
     </section>
 
@@ -37,9 +36,15 @@
         </div>
       </section>
 
-
     <section class='friends'>
       <h1 class='friends__header'>Общие друзья</h1>
+
+      <p class="help" v-if="owners.length<2">
+        Добавьте как минимум двух человек, чтобы я нашёл их общих друзей
+      </p>
+      <p class="help" v-if="!commonFriends.length && owners.length>1">
+        Нет общих друзей
+      </p>
 
       <div class='friend' v-for="friend in commonFriends">
         <div class='friend__photo' v-bind:style='{backgroundImage: "url(" + friend.photo_100 + ")"}'>
