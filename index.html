@@ -59,8 +59,8 @@
       <div class='owner' v-bind:class="{ loading: owner.loading }" v-for="owner in ownersList">
         <div class='owner__photo' v-bind:style='{backgroundImage: "url(" + owner.photo_100 + ")"}'></div>
         <div class='owner__name'>
-          <a v-bind:href="'https://vk.com/id' + owner.id" target="_blank">
-            {{owner.first_name}} {{owner.last_name}} {{owner.friends.length}}
+          <a v-bind:href="'https://vk.com/id' + owner.id" target="_blank" v-bind:title="owner.friends.length + ' друзей'">
+            {{owner.first_name}} {{owner.last_name}}
           </a>
         </div>
         <div class='owner__delete' title="Удалить" @click="removeOwner(owner.id)"></div>
