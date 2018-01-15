@@ -1,4 +1,16 @@
 // console.clear();
+function autosize(width) {
+  if (typeof VK.callMethod != 'undefined') {
+    VK.callMethod('resizeWindow', width, document.getElementById('body').clientHeight + 60);
+  } else {
+    alert('error #2');
+  }
+}
+
+
+
+
+
 (function (exports) {
   'use strict';
 
@@ -31,7 +43,7 @@
 
       this.fetchFriends()
     }
-    fetchFriends () {
+    fetchFriends() {
       let self = this;
       self.loading = true;
       console.log("loading friends");
@@ -60,6 +72,7 @@
   VK.init(
     function success() {
       console.log('start');
+      setInterval('autosize(700)', 1000);
     },
     function error() {
       console.warn('! trouble with VK.init');
@@ -139,9 +152,9 @@
         if (data.error) {
           self.showError(data.error.error_msg);
         } else {
-          data.response.forEach( (el) => {
+          data.response.forEach((el) => {
             if (el.deactivated) {
-              self.showError("Пользователь "+el.first_name+" удалён =(");
+              self.showError("Пользователь " + el.first_name + " удалён =(");
             } else {
               Vue.set(self.owners, el.id, new Owner(el))
             }

@@ -13,7 +13,7 @@
   <!-- <script>var VK = {api:{},init:() => {}};</script> -->
 </head>
 
-<body>
+<body id="body">
   <div class="wrapper" id="app">
 
     <section class="header">
@@ -57,24 +57,26 @@
 
     <section class='owners'>
       <div class='owner' v-bind:class="{ loading: owner.loading }" v-for="owner in ownersList">
-        <div class='owner__photo' v-bind:style='{backgroundImage: "url(" + owner.photo_100 + ")"}'>
-          <div class='owner__delete' title="Удалить" @click="removeOwner(owner.id)"></div>
-        </div>
+        <div class='owner__photo' v-bind:style='{backgroundImage: "url(" + owner.photo_100 + ")"}'></div>
         <div class='owner__name'>
           <a v-bind:href="'https://vk.com/id' + owner.id" target="_blank">
             {{owner.first_name}} {{owner.last_name}} {{owner.friends.length}}
           </a>
         </div>
+        <div class='owner__delete' title="Удалить" @click="removeOwner(owner.id)"></div>
       </div>
     </section>
 
     <section class='friends'>
       <h1 class='friends__header'>Общие друзья</h1>
 
-      <p class="help" v-if="ownersList.length<2">
+      <p class="help" v-if="!ownersList.length">
         Добавьте как минимум двух человек, чтобы я нашёл их общих друзей
       </p>
-      <p class="help" v-if="!commonFriends.length && ownersList.length>1">
+      <p class="help" v-if="ownersList.length && ownersList.length<2">
+        Отлично! Добавьте ещё одного
+      </p>
+      <p class="help" v-if="!commonFriends.length && ownersList.length>1 && !loading">
         Нет общих друзей
       </p>
 
