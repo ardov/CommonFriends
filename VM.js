@@ -126,6 +126,11 @@ function autosize(width) {
         console.log(this);
       },
 
+      fetchOwnersFromInput(e) {
+        e.target.select();
+        this.fetchOwners(this.input);
+      },
+
       fetchOwners(id) {
         let self = this;
         self.loading = true;

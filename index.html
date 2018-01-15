@@ -24,7 +24,7 @@
         placeholder="Адрес страницы или ID человека"
         autofocus
         @focus="$event.target.select()"
-        v-on:keyup.13="fetchOwners()"
+        v-on:keyup.13="fetchOwnersFromInput"
         v-model="input"
         v-bind:class="{ loading:loading }" />
       <p class="error" v-bind:class="{ error_hidden: !errorText }">{{errorText}}</p>
