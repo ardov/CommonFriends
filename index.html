@@ -23,6 +23,7 @@
         class='field'
         placeholder="Адрес страницы или ID человека"
         autofocus
+        @focus="$event.target.select()"
         v-on:keyup.13="fetchOwners()"
         v-model="input"
         v-bind:class="{ loading:loading }" />
@@ -57,7 +58,7 @@
     <section class='owners'>
       <div class='owner' v-bind:class="{ loading: owner.loading }" v-for="owner in ownersList">
         <div class='owner__photo' v-bind:style='{backgroundImage: "url(" + owner.photo_100 + ")"}'>
-          <div class='owner__delete' title="Удалить"></div>
+          <div class='owner__delete' title="Удалить" @click="removeOwner(owner.id)"></div>
         </div>
         <div class='owner__name'>
           <a v-bind:href="'https://vk.com/id' + owner.id" target="_blank">
@@ -79,7 +80,7 @@
 
       <div class='friend' v-for="friend in commonFriends">
         <div class='friend__photo' v-bind:style='{backgroundImage: "url(" + friend.photo_100 + ")"}'>
-          <div class='friend__add' title="Добавить к поиску"></div>
+          <div class='friend__add' title="Добавить к поиску" @click="fetchOwners(friend.id)"></div>
         </div>
         <div class='friend__name'>
           <a v-bind:href="'https://vk.com/id' + friend.id" target="_blank">

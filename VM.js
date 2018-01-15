@@ -149,6 +149,10 @@
         }
       },
 
+      removeOwner(id) {
+        Vue.delete(this.owners, id);
+      },
+
       showError(text) {
         this.errorText = text;
         setTimeout(this.hideError, 2000);
