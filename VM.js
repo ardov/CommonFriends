@@ -1,18 +1,18 @@
 // console.clear();
 function autosize(width) {
-  if (typeof VK.callMethod != 'undefined') {
-    VK.callMethod('resizeWindow', width, document.getElementById('body').clientHeight + 60);
+  if (typeof VK.callMethod != "undefined") {
+    VK.callMethod(
+      "resizeWindow",
+      width,
+      document.getElementById("body").clientHeight + 60
+    );
   } else {
-    alert('error #2');
+    alert("error #2");
   }
 }
 
-
-
-
-
-(function (exports) {
-  'use strict';
+(function(exports) {
+  "use strict";
 
   function getParameterByName(name, url) {
     if (!url) {
@@ -22,10 +22,10 @@ function autosize(width) {
     var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
       results = regex.exec(url);
     if (!results) return null;
-    if (!results[2]) return '';
+    if (!results[2]) return "";
     return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
-  let accessToken = getParameterByName('access_token');
+  let accessToken = getParameterByName("access_token");
   let testMode = 1;
 
   class Owner {
@@ -41,54 +41,58 @@ function autosize(width) {
       this.recievedFriends = false;
       this.enabled = true;
 
-      this.fetchFriends()
+      this.fetchFriends();
     }
     fetchFriends() {
       let self = this;
       self.loading = true;
       console.log("loading friends");
       VK.api(
-        "friends.get", {
+        "friends.get",
+        {
           user_id: this.id,
           order: "name",
-          fields: 'nickname, domain, sex, bdate, city, country, timezone, photo_50, photo_100, has_mobile, contacts, education, online, relation, last_seen, status, universities',
+          fields:
+            "nickname, domain, sex, bdate, city, country, timezone, photo_50, photo_100, has_mobile, contacts, education, online, relation, last_seen, status, universities",
           test_mode: testMode,
           access_token: accessToken
         },
-        function (data) {
+        function(data) {
           self.friends = data.response.items;
           self.friendsCount = data.response.count;
           self.loading = false;
           self.recievedFriends = true;
 
-          console.log('GOT FRIENDS', self, data);
-          if (self.friends.length !== self.friendsCount) console.log(`Not all friends ${self.friends.length}/${self.friendsCount}`);
+          console.log("GOT FRIENDS", self, data);
+          if (self.friends.length !== self.friendsCount)
+            console.log(
+              `Not all friends ${self.friends.length}/${self.friendsCount}`
+            );
         }
       );
     }
   }
 
-
   VK.init(
     function success() {
-      console.log('start');
-      setInterval('autosize(700)', 1000);
+      console.log("start");
+      setInterval("autosize(700)", 1000);
     },
     function error() {
-      console.warn('! trouble with VK.init');
+      console.warn("! trouble with VK.init");
     },
-    '5.65'
+    "5.65"
   );
 
   exports.vm = new Vue({
-    el: '#app',
-    name: 'Friend Search App',
+    el: "#app",
+    name: "Friend Search App",
     data: {
       owners: {},
       minCommon: 2,
       loading: false,
-      errorText: '',
-      input: ''
+      errorText: "",
+      input: ""
     },
     computed: {
       ownersList() {
@@ -98,14 +102,16 @@ function autosize(width) {
       friendList() {
         let friendList = [];
 
-        this.ownersList.forEach((owner) => {
-          owner.friends.forEach((friend) => {
-            var index = friendList.findIndex((el) => friend.id === el.id);
+        this.ownersList.forEach(owner => {
+          owner.friends.forEach(friend => {
+            var index = friendList.findIndex(el => friend.id === el.id);
 
-            if (index === -1) { // не нашли
+            if (index === -1) {
+              // не нашли
               friend.owners = [owner];
               friendList.push(friend);
-            } else { // нашли
+            } else {
+              // нашли
               friendList[index].owners.push(owner);
             }
           });
@@ -116,7 +122,7 @@ function autosize(width) {
 
       commonFriends() {
         return this.friendList
-          .filter((el) => el.owners.length >= this.minCommon)
+          .filter(el => el.owners.length >= this.minCommon)
           .sort((a, b) => b.owners.length - a.owners.length);
       }
     },
@@ -128,6 +134,7 @@ function autosize(width) {
 
       fetchOwnersFromInput(e) {
         e.target.select();
+        id = this.input.split("/").reverse()[0];
         this.fetchOwners(this.input);
       },
 
@@ -137,13 +144,14 @@ function autosize(width) {
         if (!id) id = this.input;
 
         VK.api(
-          "users.get", {
+          "users.get",
+          {
             user_ids: id,
-            fields: 'photo_100',
+            fields: "photo_100",
             test_mode: testMode,
             access_token: accessToken
           },
-          function (data) {
+          function(data) {
             self.loading = false;
             self.addOwners(data);
           }
@@ -152,16 +160,16 @@ function autosize(width) {
 
       addOwners(data) {
         let self = this;
-        console.log('Получили данные', data);
+        console.log("Получили данные", data);
 
         if (data.error) {
           self.showError(data.error.error_msg);
         } else {
-          data.response.forEach((el) => {
+          data.response.forEach(el => {
             if (el.deactivated) {
               self.showError("Пользователь " + el.first_name + " удалён =(");
             } else {
-              Vue.set(self.owners, el.id, new Owner(el))
+              Vue.set(self.owners, el.id, new Owner(el));
             }
           });
         }
@@ -176,8 +184,8 @@ function autosize(width) {
         setTimeout(this.hideError, 2000);
       },
       hideError() {
-        this.errorText = '';
+        this.errorText = "";
       }
-    },
+    }
   });
 })(window);
