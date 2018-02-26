@@ -134,8 +134,8 @@ function autosize(width) {
 
       fetchOwnersFromInput(e) {
         e.target.select();
-        id = this.input.split("/").reverse()[0];
-        this.fetchOwners(this.input);
+        let id = this.input.split("/").reverse()[0];
+        this.fetchOwners(id);
       },
 
       fetchOwners(id) {
